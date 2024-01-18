@@ -1,0 +1,78 @@
+- Files distributed
+
+g3.h
+g3.cpp
+
+g3input.dat - file with input parameters (see below)
+config.dat - a simple example of configuration file (here, and orthorhombic
+             cut of a single configuration of alpha-quartz is provided).
+
+README - this file
+
+- Compiling the code
+
+g++ -std=gnu++11 -O3 g3.cpp -o g3
+
+- Running the code
+
+./g3
+
+- Input file
+
+the name is hard-coded to be "g3input.dat", one can change it in g3.cpp
+
+- Content of the input file
+
+nAtom - number of atoms
+nType - number of atomic types 
+nConf - number of configs to read in and analyse 
+nrGrid - number of grid points along radial axis
+naGrid - number of grid points along cos axis
+Rmin - minimal distance in collecting the final g3 (see more below)
+Rmax - maximal distance in collecting the final g3 (see more below)
+LRcut - cutoff to be used along radial axis
+TypeC - atomic type of the central atom in the triangle
+TypeE - atomic type of the end atom in the triangle
+input - name of the input file with configurations
+output - name of the output file with calculated g3
+
+If not specified, the default values are used (see g3.h for specific values).
+
+Central atom is atom B and end atoms are A and C (see fig.1 in the main article):
+
+"A mixed radial, angular, three-body distribution function as a tool for 
+local structure characterization: Application to single-component structures"
+Sergey V. Sukhomlinov and Martin H. Müser
+
+- Structure of the input configuration file
+
+coded for a standard LAMMS dump config file. Please note that currently only orthorhombic
+box is implemented. The coordinates should be in the same units as the box unit vectors.
+
+- Some info on g3 implementation
+
+there is a classical way of implementing calculation of any distribution function.
+Break the distance into bins, then calculate how many pairs/triplets etc. fall into this
+bin, then proceed to normalize, such that the ideal gas gives one.
+
+Here we proceeded in a slightly different way. Initially we do not make bins, but rather place
+nrGrid (or naGrid) points onto an axis from 0 to LRcut. Whenever we have a pair of atoms,
+the distance is calculated and the two nearst grid points are identified (the same would
+hold for the cosine axis when triplets are considered). This distance gives a weight to
+each of these two grid points, which is proportional to negative distance to them. For example,
+if the distance falls exactly in the middle between two nearest grid points, it contributes
+1/2 to each of the points. For triplets one would have not just a 1D segment, but rather a
+cuboid.
+
+The total g3 is calculated. At the end, integration over one of the distances from Rmin
+to Rmax is performed.
+
+- Output and plotting
+
+the output format is compatible with gnuplot.
+
+set pm3d map
+splot "g3distr.dat"
+
+These two commands will do the job, and a figure similar to those in the article will be
+produced.

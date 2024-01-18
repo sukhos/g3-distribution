@@ -1,0 +1,13 @@
+4608         #nAtom
+2            #nType
+1            #nConf
+401          #nrGrid
+201          #naGrid
+1.45         #Rmin
+1.75         #Rmax
+
+5.0          #LRcut
+1            #TypeC
+2            #TypeE
+config.dat   #input
+g3distr.dat  #output
